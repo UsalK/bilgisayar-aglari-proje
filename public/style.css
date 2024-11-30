@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+* {
+  font-family: 'Poppins';
+}
+
+.nav-bar {
+  background-color: bisque;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+}
+
+ul {
+  display: flex;
+  gap: 50px;
+  font-size: 18px;
+}
+
+.nav-bar p {
+  font-size: 25px;
+}
+
+li {
+  list-style-type: none;
+}
+
+li a {
+  text-decoration: none;
+  transition: ease-in 0.3s;
+  color: black;
+}
+
+li a:hover {
+  transition: ease-in 0.3s;
+  text-decoration: none;
+  color: rgb(55, 0, 255);
+  text-shadow: 0px 1px;
+}
+
+.about-blog {
+  margin-top: 25px;
+  justify-content: space-between;
+  column-gap: 20px;
+  width: 800px;
+  margin: 20px auto;
+}
+
+.about-blog p1 {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.homepage-blog {
+  margin-top: 25px;
+  justify-content: space-between;
+  column-gap: 20px;
+  width: 800px;
+  margin: 20px auto;
+}
+
+.homepage-blog p1 {
+  font-size: 25px;
+  font-weight: bold;
+}

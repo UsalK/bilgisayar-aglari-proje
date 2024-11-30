@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%-include('./inc/head')%>
+  </head>
+
+  <style>
+    .chat-wrap {
+      display: flex;
+      width: 900px; /* Daha geniş bir ana kutu */
+      height: 600px;
+      margin: 25px auto;
+      box-sizing: border-box;
+    }
+
+    .add-friend {
+      background-color: aquamarine;
+      width: 250px;
+      height: 80px;
+    }
+
+    .users {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background-color: aqua;
+      width: 400px; /* Genişliği artırıldı */
+      height: 100%;
+    }
+
+    .title {
+      background-color: bisque;
+      height: 35px;
+      text-align: center;
+      padding-top: 10px;
+      font-weight: bolder;
+    }
+
+    .user {
+  background-color: red;
+  height: 50px;
+  text-align: center;
+  cursor: pointer; /* Buton işlevi için */
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  width: 230px;
+}
+
+.user:hover {
+  background-color: darkred;
+}
+
+
+    .chat-box {
+      background-color: antiquewhite;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info {
+      background-color: green;
+      width: 100%;
+      height: 50px;
+      flex-shrink: 0;
+    }
+
+    .info p {
+      margin-left: 20px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .display {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: calc(100% - 82px);
+      flex-grow: 1;
+      overflow-y: auto;
+      gap: 10px;
+    }
+
+    .chat {
+      display: flex;
+      flex-direction: column;
+      color: aliceblue;
+    }
+
+    .chat name {
+      color: aliceblue;
+    }
+
+    .content {
+      color: white;
+      width: fit-content;
+      margin-left: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
+
+    .text-box {
+      display: flex;
+      background-color: crimson;
+      width: 100%;
+      height: 7%;
+      flex-shrink: 0;
+    }
+
+    #text-box {
+      border: none;
+      width: 424px;
+      height: 100%;
+      font-size: 18px;
+    }
+
+    #buton {
+      border: none;
+      background-color: rgba(255, 255, 255, 1);
+      transition: ease-in 0.3s;
+    }
+
+    #text-box:focus {
+      outline: none;
+      border: none;
+    }
+
+    #buton:hover {
+      background-color: greenyellow;
+      transition: ease-in 0.3s;
+    }
+
+    form {
+      display: flex;
+    }
+  </style>
+
+  <body>
+    <%-include('./inc/navbar')%>
+
+    <div class="chat-wrap">
+      <div class="users">
+        <div class="title">CHAT</div>
+
+        <div id="friends-list">
+          
+        </div>
+      </div>
+
+      <div class="chat-box">
+        <div class="info" id="info-box">
+
+        </div>
+
+        <div id="display" class="display">
+          <div class="chat">
+            <div class="name"><b></b></div>
+            <div id="content" class="content"></div>
+          </div>
+        </div>
+
+        <div class="text-box">
+          <input
+            id="text-box"
+            name="message"
+            placeholder="Mesajınızı yazın"
+            type="text"
+          />
+          <button id="send-button">Gönder</button>
+        </div>
+      </div>
+
+      <div class="add-friend">
+        <input id="add-friend-text" placeholder="Ara" type="text" />
+        <input id="add-friend-button" type="button" value="BUL" />
+      </div>
+    </div>
+
+    <script></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="chat2.js"></script>
+    <script type="module" src="friend.js"></script>
+  </body>
+</html>
