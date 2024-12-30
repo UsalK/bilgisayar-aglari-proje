@@ -6,7 +6,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const newUserController = require("./controllers/newUserController");
 const messageController = require("./controllers/messageController");
-const friendController = require("./controllers/friendController")
+const friendController = require("./controllers/friendController");
 
 const app = express();
 
@@ -15,31 +15,64 @@ const dbURL =
 
 mongoose
   .connect(dbURL)
-  .then((result) => console.log("Database bağlantısı başarılı"))
-  .catch((err) => console.log(err));
+  .then(() => console.log("Database bağlantısı başarılı"))
+  .catch((err) => console.log("DATABASE BAĞLANTISI SAĞLANAMADI: " + err));
 
 // Socket.IO ile HTTP sunucusu oluşturma
 const server = http.createServer(app);
 const io = new Server(server);
 
-io.on("connection", (socket) => {
-  console.log("Kullanıcı bağlantısı sağlandı: " + socket.id);
 
-  socket.on("chat", (data) => {
-    io.emit("chat", data);
+
+//!YENİ SOCKET AYARLARI
+
+const userSockets = {}; // Kullanıcı adı -> socket.id eşleşmesini tutacak
+
+io.on("connection", (socket) => {
+  console.log("Kullanıcı bağlandı: " + socket.id);
+
+  // Kullanıcının adını oturumdan al ve socket ile eşleştir
+  socket.on("register", (username) => {
+    userSockets[username] = socket.id;
+    console.log(`${username} socket ID ile eşleştirildi: ${socket.id}`);
   });
 
+  // Kullanıcı bağlantıyı kapattığında socket eşleştirmesini kaldır
   socket.on("disconnect", () => {
-    console.log(socket.id + " kullanıcısı ayrıldı");
+    for (const [username, id] of Object.entries(userSockets)) {
+      if (id === socket.id) {
+        delete userSockets[username];
+        console.log(`${username} bağlantıyı kesti.`);
+        break;
+      }
+    }
+  });
+
+  // Özel mesajlaşma
+  socket.on("private_message", (data) => {
+    const { recipient, message } = data;
+    const recipientSocketId = userSockets[recipient];
+
+    if (recipientSocketId) {
+      io.to(recipientSocketId).emit("private_message", {
+        sender: data.sender,
+        message,
+      });
+    } else {
+      console.log("Alıcı şu anda çevrimdışı.");
+    }
   });
 });
+
+
+//!YENİ SOCKET AYARLARI
 
 // Rotalar
 app.set("view engine", "ejs");
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // JSON verilerini işlemek için gerekli
+app.use(express.json());
 app.use(cookieParser());
 
 server.listen(3000, () => {
@@ -49,14 +82,14 @@ server.listen(3000, () => {
 app.get("*", checkUser);
 
 app.get("/", (req, res) => {
-  res.cookie("jwt", "", { maxAge: 1 });
+  //res.cookie("jwt", "", { maxAge: 1 });
   res.render("index", {
     title: "Ana Sayfa",
   });
 });
 
 app.get("/chat", requireAuth, (req, res) => {
-  res.render("chat", { title: "Chat" });
+  res.render("chat", { title: "Chat",loggedUser:res.locals.user });
 });
 
 app.get("/login", (req, res) => {
@@ -80,17 +113,21 @@ function setIO() {
 messageController.setIO(setIO());
 
 // Yeni rota: Mesaj gönderme
-app.post("/send-message",requireAuth,messageController.chat)
+app.post("/send-message", requireAuth, messageController.chat);
 
 //?-----------------------------------------------------------------------------------------------
 
-app.post('/find-friend', requireAuth,friendController.findFriend)
+app.post("/find-friend", requireAuth, friendController.findFriend);
 
-app.post('/disp-friend',requireAuth,friendController.getFriends)
+app.post("/disp-friend", requireAuth, friendController.getFriends);
 
 //?-----------------------------------------------------------------------------------------------
 
-app.post('/get-chat',requireAuth,messageController.getChat)
+app.post("/get-chat", requireAuth, messageController.getChat);
+
+app.post("/unread-messages",requireAuth,messageController.getUnreadMessages)
+
+app.post("/mark-as-read",requireAuth,messageController.markAsRead)
 
 //! 404 sayfası
 app.use((req, res) => {
